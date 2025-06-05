@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MessageCircle, Video, Users, FileText, Settings } from 'lucide-react';
+import { MessageCircle, Video, Users, FileText, Settings, Sparkles } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
@@ -22,13 +22,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const activeTab = tabs.find(tab => tab.path === location.pathname)?.id || 'chats';
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-cyan-50">
+      {/* Header with Unite branding */}
+      <div className="unite-gradient h-20 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
+        <div className="flex items-center space-x-3 z-10">
+          <div className="relative">
+            <Sparkles className="text-white h-8 w-8 floating-element" />
+            <div className="absolute inset-0 bg-white/20 rounded-full blur-md"></div>
+          </div>
+          <h1 className="text-white text-2xl font-bold tracking-wide">Unite</h1>
+        </div>
+      </div>
+
       <main className="flex-1 overflow-hidden">
         {children}
       </main>
       
-      {/* Bottom Navigation */}
-      <nav className="bg-white border-t border-gray-200 px-2 py-1 safe-area-inset-bottom">
+      {/* Enhanced Bottom Navigation */}
+      <nav className="bg-white/95 backdrop-blur-md border-t border-white/20 px-2 py-2 safe-area-inset-bottom shadow-2xl">
         <div className="flex justify-around">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -38,14 +50,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <button
                 key={tab.id}
                 onClick={() => navigate(tab.path)}
-                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
+                className={`flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-300 transform ${
                   isActive 
-                    ? 'text-purple-600 bg-purple-50' 
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'unite-nav-active scale-110' 
+                    : 'unite-nav-inactive hover:scale-105'
                 }`}
               >
-                <Icon size={24} className={isActive ? 'text-purple-600' : ''} />
-                <span className="text-xs mt-1 font-medium">{tab.label}</span>
+                <Icon size={24} className={isActive ? 'text-white' : ''} />
+                <span className={`text-xs mt-1 font-medium ${isActive ? 'text-white' : ''}`}>
+                  {tab.label}
+                </span>
+                {isActive && (
+                  <div className="absolute -bottom-1 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                )}
               </button>
             );
           })}
