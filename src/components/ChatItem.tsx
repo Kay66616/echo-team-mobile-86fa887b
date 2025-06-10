@@ -1,17 +1,17 @@
 
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ChatItemProps {
   id: string;
   name: string;
   lastMessage: string;
   timestamp: string;
-  avatar?: string;
   unreadCount?: number;
   isOnline?: boolean;
   isGroup?: boolean;
+  avatar: string;
   onClick: () => void;
 }
 
@@ -19,44 +19,111 @@ const ChatItem: React.FC<ChatItemProps> = ({
   name,
   lastMessage,
   timestamp,
+  unreadCount,
+  isOnline,
+  isGroup,
   avatar,
-  unreadCount = 0,
-  isOnline = false,
-  isGroup = false,
   onClick
 }) => {
   return (
-    <div 
-      onClick={onClick}
-      className="flex items-center p-4 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100"
-    >
-      <div className="relative">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={avatar} alt={name} />
-          <AvatarFallback className="bg-gradient-to-r from-purple-400 to-blue-400 text-white font-semibold">
-            {name.split(' ').map(n => n[0]).join('').toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        {isOnline && !isGroup && (
-          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-        )}
-      </div>
+    <TouchableOpacity style={styles.container} onPress={onClick}>
+      <View style={styles.avatarContainer}>
+        <Image source={{ uri: avatar }} style={styles.avatar} />
+        {isOnline && <View style={styles.onlineIndicator} />}
+      </View>
       
-      <div className="flex-1 ml-3 min-w-0">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900 truncate">{name}</h3>
-          <span className="text-xs text-gray-500 ml-2">{timestamp}</span>
-        </div>
-        <p className="text-sm text-gray-600 truncate mt-1">{lastMessage}</p>
-      </div>
-      
-      {unreadCount > 0 && (
-        <Badge className="ml-2 bg-red-500 hover:bg-red-600 text-white min-w-[20px] h-5 text-xs rounded-full">
-          {unreadCount > 99 ? '99+' : unreadCount}
-        </Badge>
-      )}
-    </div>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.name} numberOfLines={1}>{name}</Text>
+          <Text style={styles.timestamp}>{timestamp}</Text>
+        </View>
+        
+        <View style={styles.messageRow}>
+          <Text style={styles.lastMessage} numberOfLines={1}>
+            {lastMessage}
+          </Text>
+          {unreadCount && unreadCount > 0 && (
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadText}>{unreadCount}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    padding: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 12,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#4ade80',
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  content: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+    flex: 1,
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  messageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  lastMessage: {
+    fontSize: 14,
+    color: '#6b7280',
+    flex: 1,
+  },
+  unreadBadge: {
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  unreadText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+});
 
 export default ChatItem;
